@@ -1,0 +1,85 @@
+# Gradle
+.gradle/
+build/
+
+# Gradle wrapper
+!gradle/wrapper/gradle-wrapper.jar
+
+# Java
+*.class
+*.log
+*.out
+*.jar
+*.war
+*.ear
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+.nb-gradle/
+
+# Maven
+target/
+
+# Gradle-specific files
+gradle-app.setting
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Temporary files
+*.swp
+*.swo
+
+
+## Based on default LibGDX project settings.
+
+## Java
+hs_err_pid*
+
+## GWT
+war/
+html/war/gwt_bree/
+html/gwt-unitCache/
+.apt_generated/
+html/war/WEB-INF/deploy/
+html/war/WEB-INF/classes/
+.gwt/
+gwt-unitCache/
+www-test/
+.gwt-tmp/
+
+## Android Studio, IntelliJ, Android
+android/libs/armeabi/
+android/libs/armeabi-v7a/
+android/libs/x86/
+android/gen/
+out/
+com_crashlytics_export_strings.xml
+
+
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
+
+*~.nib
+local.properties
+.loadpath
+.externalToolBuilders/
+*.launch
+
+## Gradle
+.gradle
