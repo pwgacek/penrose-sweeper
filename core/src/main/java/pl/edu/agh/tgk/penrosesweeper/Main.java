@@ -7,11 +7,9 @@ import com.badlogic.gdx.Gdx;
 public class Main extends Game {
     @Override
     public void create() {
-        // Get the display width and height
         int height = Gdx.graphics.getDisplayMode().height;
 
-        // Set the windowed mode to fullscreen size (borderless)
         Gdx.graphics.setWindowedMode(height, height);
-        setScreen(new FirstScreen());
+        setScreen(new GameScreen());
     }
 }

@@ -1,1 +1,4 @@
+Lato-Regular.ttf
+explosionv2.png
 figures.txt
+flag4.png
