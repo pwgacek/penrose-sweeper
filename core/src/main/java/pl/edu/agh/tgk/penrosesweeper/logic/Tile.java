@@ -7,25 +7,37 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Tile {
     private final Rhombus rhombus;
-    private final int value;
-    private final List<Tile> neighbours;
+    private int value;
+    private final Set<Tile> neighbours;
 
     private boolean isCovered = true;
     private boolean isMarkedAsMine = false;
 
-    public Tile(Rhombus rhombus, int value) {
+    public Tile(Rhombus rhombus) {
         this.rhombus = rhombus;
-        this.value = value;
-        neighbours = new ArrayList<>();
+        neighbours = new HashSet<>();
+        this.value = 0;
+    }
+
+    void setMine() {
+        this.value = -1;
+    }
+
+    void increaseValue() {
+        this.value++;
     }
 
     void addNeighbour(Tile tile) {
         this.neighbours.add(tile);
+    }
+
+    public Set<Tile> getNeighbours() {
+        return neighbours;
     }
 
     public Rhombus getRhombus() {
@@ -58,10 +70,10 @@ public class Tile {
         return this.rhombus.isPointInside(point);
     }
 
-    public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, BitmapFont font, Texture flagTexture) {
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, BitmapFont font, Texture flagTexture, boolean isHovered) {
 
         if (isCovered) {
-            this.rhombus.renderFilled(shapeRenderer, Color.DARK_GRAY);
+            this.rhombus.renderFilled(shapeRenderer, isHovered ? Color.GRAY : Color.DARK_GRAY);
         } else if (value > 0) {
             this.rhombus.renderValue(spriteBatch, font, value);
         }
@@ -70,6 +82,10 @@ public class Tile {
         }
         this.rhombus.renderBorders(shapeRenderer);
 
+    }
+
+    public void renderGameOver(SpriteBatch spriteBatch, Texture explosionTexture) {
+            this.rhombus.renderExplosion(spriteBatch, explosionTexture);
     }
 
 

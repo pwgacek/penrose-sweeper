@@ -7,8 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,25 +17,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 public class Board {
     private final List<Tile> tiles;
+    private final int minePercentage;
 
-    public Board() {
-        List<Rhombus> rhombuses = loadRhombuses();
-        List<Integer> values = generateValues(rhombuses);
-        tiles = createTiles(rhombuses, values);
-    }
-
-    private List<Tile> createTiles(List<Rhombus> rhombuses, List<Integer> values) {
-        List<Tile> tiles = IntStream.range(0, rhombuses.size())
-            .mapToObj(i -> new Tile(rhombuses.get(i), values.get(i)))
-            .toList();
-
-        setNeighbours(tiles);
-
-        return tiles;
+    public Board(int minePercentage) {
+        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
+        this.minePercentage = minePercentage;
+        setNeighbours();
     }
 
     private List<Rhombus> loadRhombuses() {
@@ -58,82 +49,65 @@ public class Board {
         }
     }
 
-    private List<Integer> generateValues(List<Rhombus> rhombuses) {
-        int n = rhombuses.size();
-        int bombCount = n / 10; // 10%
-        List<Integer> values = new ArrayList<>(Collections.nCopies(n, 0));
-        Random rand = new Random();
-
-
-        // 1. Randomly choose bomb indexes
-        Set<Integer> bombIndices = new HashSet<>();
-        while (bombIndices.size() < bombCount) {
-            bombIndices.add(rand.nextInt(n));
-        }
-
-        // 2. Build neighbor map (adjacency list)
-        Map<Integer, List<Integer>> neighbours = new HashMap<>();
-        Map<Vector2, List<Integer>> vertexMap = new HashMap<>();
-
-        for (int i = 0; i < n; i++) {
-            Rhombus rh = rhombuses.get(i);
-            for (Vector2 v : List.of(rh.vA(), rh.vB(), rh.vC(), rh.vD())) {
-                vertexMap.computeIfAbsent(v, k -> new ArrayList<>()).add(i);
-            }
-        }
-
-        for (int i = 0; i < n; i++) {
-            Set<Integer> neigh = new HashSet<>();
-            Rhombus rh = rhombuses.get(i);
-            for (Vector2 v : List.of(rh.vA(), rh.vB(), rh.vC(), rh.vD())) {
-                for (int ni : vertexMap.get(v)) {
-                    if (ni != i) neigh.add(ni);
-                }
-            }
-            neighbours.put(i, new ArrayList<>(neigh));
-        }
-
-
-        // 3. Set bombs to -1
-        for (int bombIndex : bombIndices) {
-            values.set(bombIndex, -1);
-        }
-
-        // 4. Count bomb neighbors for each non-bomb tile
-        for (int i = 0; i < n; i++) {
-            if (values.get(i) == -1) continue; // skip bombs
-            int count = 0;
-            for (int neigh : neighbours.getOrDefault(i, Collections.emptyList())) {
-                if (bombIndices.contains(neigh)) {
-                    count++;
-                }
-            }
-            values.set(i, count);
-        }
-
-        return values;
+    private Vector2 roundVector(Vector2 v) {
+        float x = new BigDecimal(v.x).setScale(4, RoundingMode.DOWN).floatValue();
+        float y = new BigDecimal(v.y).setScale(4, RoundingMode.DOWN).floatValue();
+        return new Vector2(x, y);
     }
 
-    private void setNeighbours(List<Tile> tiles) {
+    private void setNeighbours() {
         Map<Vector2, List<Tile>> vertexMap = new HashMap<>();
 
         for (Tile tile : tiles) {
             Rhombus rh = tile.getRhombus();
-            for (Vector2 v : List.of(rh.vA(), rh.vB(), rh.vC(), rh.vD())) {
-                vertexMap.computeIfAbsent(v, k -> new ArrayList<>()).add(tile);
-            }
+            List.of(rh.vA(), rh.vB(), rh.vC(), rh.vD())
+                .forEach(v -> vertexMap.computeIfAbsent(roundVector(v), k -> new ArrayList<>()).add(tile));
+
         }
 
         for (Tile tile : tiles) {
             Rhombus rh = tile.getRhombus();
             for (Vector2 v : List.of(rh.vA(), rh.vB(), rh.vC(), rh.vD())) {
-                for (Tile neighbour : vertexMap.get(v)) {
+                for (Tile neighbour : vertexMap.get(roundVector(v))) {
                     if (tile != neighbour) tile.addNeighbour(neighbour);
                 }
             }
         }
     }
 
+    public void initialize(Tile startingTile) {
+        int mineCount = (int) (minePercentage * tiles.size() / 100f);
+
+        List<Integer> possibleMineIndices = getPossibleMineIndices(startingTile);
+
+        Random rand = new Random();
+        for (int i = 0; i < mineCount; i++) {
+            int mineIndex = possibleMineIndices.remove(rand.nextInt(possibleMineIndices.size()));
+            tiles.get(mineIndex).setMine();
+        }
+
+        tiles.stream().filter(it -> !it.isMine()).forEach(it -> {
+
+            for (Tile neigh : it.getNeighbours()) {
+                if (neigh.isMine()) {
+                    it.increaseValue();
+                }
+            }
+        });
+    }
+
+    private List<Integer> getPossibleMineIndices(Tile startingTile) {
+        Set<Tile> noMineTiles = new HashSet<>(startingTile.getNeighbours());
+        noMineTiles.add(startingTile);
+
+        List<Integer> possibleMineIndices = new ArrayList<>(noMineTiles.size());
+        for (int i = 0; i < tiles.size(); i++) {
+            if (!noMineTiles.contains(tiles.get(i))) {
+                possibleMineIndices.add(i);
+            }
+        }
+        return possibleMineIndices;
+    }
 
     public List<Tile> getTiles() {
         return tiles;

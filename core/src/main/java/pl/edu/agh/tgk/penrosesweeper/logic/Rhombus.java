@@ -90,4 +90,12 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
         spriteBatch.end();
 
     }
+
+    public void renderExplosion(SpriteBatch spriteBatch, Texture explosionTexture) {
+        Vector2 center = getCenter();
+        spriteBatch.begin();
+        spriteBatch.draw(explosionTexture, center.x - explosionTexture.getWidth() / 2f, center.y - explosionTexture.getHeight() / 2f);
+        spriteBatch.end();
+
+    }
 }

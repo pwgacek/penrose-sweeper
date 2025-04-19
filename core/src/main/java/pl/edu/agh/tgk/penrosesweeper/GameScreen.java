@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Vector3;
 import pl.edu.agh.tgk.penrosesweeper.logic.Board;
 import pl.edu.agh.tgk.penrosesweeper.logic.Tile;
 
+import java.util.Optional;
+
 public class GameScreen implements Screen {
     private static final int BOARD_SIZE = 1600;
     private final Board board;
@@ -27,10 +29,10 @@ public class GameScreen implements Screen {
     private Texture flagTexture;
     private OrthographicCamera camera;
 
-    private boolean exploded = false;
-    private Vector2 explosionCords = new Vector2();
+    private boolean isBoardInitialized = false;
+    private boolean isGameOver = false;
     public GameScreen() {
-        board = new Board();
+        board = new Board(10);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class GameScreen implements Screen {
         parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
 
         font = generator.generateFont(parameter);
-        explosionTexture = new Texture(Gdx.files.internal("explosionv2.png"));
+        explosionTexture = new Texture(Gdx.files.internal("explosionv3.png"));
         flagTexture = new Texture(Gdx.files.internal("flag4.png"));
         generator.dispose();
 
@@ -68,15 +70,27 @@ public class GameScreen implements Screen {
             Gdx.app.exit();
         }
 
-        if (!exploded) {
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                Vector2 coordinates = getMouseCoordinates();
+        Vector2 coordinates = getMouseCoordinates();
+        Optional<Tile> optionalTile = board.getTile(coordinates);
 
-                board.getTile(coordinates).ifPresent(tile -> {
+
+
+
+        if (!isBoardInitialized) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                optionalTile.ifPresent(tile -> {
+                    board.initialize(tile);
+                    isBoardInitialized = true;
+                    tile.uncover();
+                });
+            }
+        }
+        else if (!isGameOver) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                 optionalTile.ifPresent(tile -> {
                     if (tile.uncover()) {
                         if (tile.isMine()) {
-                            exploded = true;
-                            explosionCords = coordinates;
+                            isGameOver = true;
                         }
                     }
                 });
@@ -87,16 +101,18 @@ public class GameScreen implements Screen {
             }
         }
         shapeRenderer.setAutoShapeType(true);
-        for (Tile tile : board.getTiles()) {
-            tile.render(shapeRenderer, spriteBatch, font, flagTexture);
-        }
 
-        if (exploded) {
-            spriteBatch.begin();
-            spriteBatch.draw(explosionTexture, explosionCords.x - explosionTexture.getWidth() / 2f, explosionCords.y - explosionTexture.getHeight() / 2f);
-            spriteBatch.end();
 
+        if (isGameOver) {
+            board.getTiles().stream().filter(it -> !it.isMine()).forEach(tile -> tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null))));
+            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(spriteBatch, explosionTexture));
+        } else {
+            for (Tile tile : board.getTiles()) {
+                tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null)));
+            }
         }
+        spriteBatch.begin();
+        spriteBatch.end();
 
     }
 
