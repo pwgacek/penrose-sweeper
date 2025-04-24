@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
     private boolean isBoardInitialized = false;
     private boolean isGameOver = false;
     public GameScreen() {
-        board = new Board(10);
+        board = new Board(10, 5);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class GameScreen implements Screen {
 
         if (isGameOver) {
             board.getTiles().stream().filter(it -> !it.isMine()).forEach(tile -> tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null))));
-            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(spriteBatch, explosionTexture));
+            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(shapeRenderer ,spriteBatch, explosionTexture));
         } else {
             for (Tile tile : board.getTiles()) {
                 tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null)));

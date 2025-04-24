@@ -84,8 +84,8 @@ public class Tile {
 
     }
 
-    public void renderGameOver(SpriteBatch spriteBatch, Texture explosionTexture) {
-            this.rhombus.renderExplosion(spriteBatch, explosionTexture);
+    public void renderGameOver(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, Texture explosionTexture) {
+            this.rhombus.renderExplosion(shapeRenderer, spriteBatch, explosionTexture);
     }
 
 

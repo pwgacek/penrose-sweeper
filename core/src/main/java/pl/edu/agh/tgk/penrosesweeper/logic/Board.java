@@ -3,6 +3,7 @@ package pl.edu.agh.tgk.penrosesweeper.logic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import pl.edu.agh.tgk.penrosesweeper.logic.generation.RhombusesGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,8 +23,9 @@ public class Board {
     private final List<Tile> tiles;
     private final int minePercentage;
 
-    public Board(int minePercentage) {
-        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
+    public Board(int minePercentage, int n) {
+//        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
+        this.tiles = RhombusesGenerator.generateRhombuses(n).stream().map(Tile::new).toList();
         this.minePercentage = minePercentage;
         setNeighbours();
     }
@@ -76,8 +78,7 @@ public class Board {
     }
 
     public void initialize(Tile startingTile) {
-        int mineCount = (int) (minePercentage * tiles.size() / 100f);
-
+        int mineCount = (int) Math.ceil((minePercentage * tiles.size() / 100f));
         List<Integer> possibleMineIndices = getPossibleMineIndices(startingTile);
 
         Random rand = new Random();
