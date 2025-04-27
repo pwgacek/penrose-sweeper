@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
     private boolean isBoardInitialized = false;
     private boolean isGameOver = false;
     public GameScreen() {
-        board = new Board(10, 5);
+        board = new Board(BOARD_SIZE, 10, 5);
     }
 
     @Override

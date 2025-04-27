@@ -23,9 +23,9 @@ public class Board {
     private final List<Tile> tiles;
     private final int minePercentage;
 
-    public Board(int minePercentage, int n) {
+    public Board(double boardSize, int minePercentage, int n) {
 //        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
-        this.tiles = RhombusesGenerator.generateRhombuses(n).stream().map(Tile::new).toList();
+        this.tiles = RhombusesGenerator.generateRhombuses(boardSize, n).stream().map(Tile::new).toList();
         this.minePercentage = minePercentage;
         setNeighbours();
     }

@@ -10,6 +10,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
 
+    public Rhombus(Rhombus rhombus, float scale) {
+        this(scaleVector(rhombus.vA, scale), scaleVector(rhombus.vB, scale), scaleVector(rhombus.vC, scale), scaleVector(rhombus.vD, scale));
+    }
+
+    private static Vector2 scaleVector(Vector2 vector, float scale) {
+        return new Vector2(vector.x * scale, vector.y * scale);
+    }
+
     public boolean isPointInside(Vector2 point) {
         return sameSide(point, vA, vB,vC) &&
             sameSide(point, vB, vC, vD) &&

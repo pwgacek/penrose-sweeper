@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 public class PenroseTiling {
 
-    private static final float TOL = 1e-5F;
-    private static final float PSI = (float) ((Math.sqrt(5) - 1) / 2);
-    private static final float PSI2 = 1 - PSI;
+    public static final float TOL = 1e-5F;
+    public static final float PSI = (float) ((Math.sqrt(5) - 1) / 2);
+    public static final float PSI2 = 1 - PSI;
 
     static class Complex implements Comparable<Complex >{
         float real, imag;
