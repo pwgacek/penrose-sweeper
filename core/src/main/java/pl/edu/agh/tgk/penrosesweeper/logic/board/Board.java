@@ -1,9 +1,11 @@
-package pl.edu.agh.tgk.penrosesweeper.logic;
+package pl.edu.agh.tgk.penrosesweeper.logic.board;
 
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import pl.edu.agh.tgk.penrosesweeper.logic.generation.RhombusesGenerator;
+import pl.edu.agh.tgk.penrosesweeper.logic.Difficulty;
+import pl.edu.agh.tgk.penrosesweeper.logic.rhombus.Rhombus;
+import pl.edu.agh.tgk.penrosesweeper.logic.rhombus.RhombusesGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,12 +25,21 @@ public class Board {
     private final List<Tile> tiles;
     private final int minePercentage;
 
-    public Board(double boardSize, int minePercentage, int n) {
+    public Board(double screenSize, Difficulty difficulty, BoardSize size) {
+        this.minePercentage = difficulty.minePercentage;
 //        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
-        this.tiles = RhombusesGenerator.generateRhombuses(boardSize, n).stream().map(Tile::new).toList();
-        this.minePercentage = minePercentage;
+        this.tiles = RhombusesGenerator.generateRhombuses(screenSize, getNGen(size)).stream().map(Tile::new).toList();
         setNeighbours();
     }
+
+    private int getNGen(BoardSize size) {
+        return switch (size) {
+            case SMALL -> 4;
+            case NORMAL -> 5;
+            case BIG -> 6;
+        };
+    }
+
 
     private List<Rhombus> loadRhombuses() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(Gdx.files.internal("figures.txt").read()))) {

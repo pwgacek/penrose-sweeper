@@ -1,12 +1,11 @@
-package pl.edu.agh.tgk.penrosesweeper.logic;
+package pl.edu.agh.tgk.penrosesweeper.logic.rhombus;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import pl.edu.agh.tgk.penrosesweeper.gui.font.NumbersFont;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.ExplosionTexture;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
 
 public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
 
@@ -43,19 +42,8 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
         return new Vector2(centerX, centerY);
     }
 
-    public void renderValue(SpriteBatch spriteBatch, BitmapFont font, int value) {
-
-        Vector2 center = getCenter();
-
-        GlyphLayout layout = new GlyphLayout(font, String.valueOf(value));
-        float textWidth = layout.width;
-        float textHeight = layout.height;
-
-        float xPos = center.x - textWidth / 2;
-        float yPos = center.y + textHeight / 2;
-        spriteBatch.begin();
-        font.draw(spriteBatch, String.valueOf(value), xPos, yPos);
-        spriteBatch.end();
+    public void renderValue(NumbersFont font, int value) {
+        font.draw(getCenter(), value);
     }
 
     public void renderBorders(ShapeRenderer shapeRenderer) {
@@ -91,20 +79,14 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
         shapeRenderer.end();
     }
 
-    public void renderMarked(SpriteBatch spriteBatch, Texture flagTexture) {
-        Vector2 center = getCenter();
-        spriteBatch.begin();
-        spriteBatch.draw(flagTexture, center.x - flagTexture.getWidth() / 2f, center.y - flagTexture.getHeight() / 2f);
-        spriteBatch.end();
+    public void renderMarked(FlagTexture flagTexture) {
+        flagTexture.draw(getCenter());
 
     }
 
-    public void renderExplosion(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, Texture explosionTexture) {
+    public void renderExplosion(ShapeRenderer shapeRenderer, ExplosionTexture explosionTexture) {
         renderBorders(shapeRenderer);
-        Vector2 center = getCenter();
-        spriteBatch.begin();
-        spriteBatch.draw(explosionTexture, center.x - explosionTexture.getWidth() / 2f, center.y - explosionTexture.getHeight() / 2f);
-        spriteBatch.end();
+        explosionTexture.draw(getCenter());
 
     }
 }

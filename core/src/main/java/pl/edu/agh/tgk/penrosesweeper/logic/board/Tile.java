@@ -1,11 +1,13 @@
-package pl.edu.agh.tgk.penrosesweeper.logic;
+package pl.edu.agh.tgk.penrosesweeper.logic.board;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import pl.edu.agh.tgk.penrosesweeper.gui.font.NumbersFont;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.ExplosionTexture;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
+import pl.edu.agh.tgk.penrosesweeper.logic.rhombus.Rhombus;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -70,22 +72,22 @@ public class Tile {
         return this.rhombus.isPointInside(point);
     }
 
-    public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, BitmapFont font, Texture flagTexture, boolean isHovered) {
+    public void render(ShapeRenderer shapeRenderer, NumbersFont font, FlagTexture flagTexture, boolean isHovered) {
 
         if (isCovered) {
             this.rhombus.renderFilled(shapeRenderer, isHovered ? Color.GRAY : Color.DARK_GRAY);
         } else if (value > 0) {
-            this.rhombus.renderValue(spriteBatch, font, value);
+            this.rhombus.renderValue(font, value);
         }
         if (isMarkedAsMine) {
-            this.rhombus.renderMarked(spriteBatch, flagTexture);
+            this.rhombus.renderMarked(flagTexture);
         }
         this.rhombus.renderBorders(shapeRenderer);
 
     }
 
-    public void renderGameOver(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, Texture explosionTexture) {
-            this.rhombus.renderExplosion(shapeRenderer, spriteBatch, explosionTexture);
+    public void renderGameOver(ShapeRenderer shapeRenderer, ExplosionTexture explosionTexture) {
+            this.rhombus.renderExplosion(shapeRenderer, explosionTexture);
     }
 
 

@@ -1,4 +1,4 @@
-package pl.edu.agh.tgk.penrosesweeper;
+package pl.edu.agh.tgk.penrosesweeper.gui;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

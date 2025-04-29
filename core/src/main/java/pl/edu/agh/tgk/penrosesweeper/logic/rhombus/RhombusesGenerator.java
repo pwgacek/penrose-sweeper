@@ -1,19 +1,18 @@
-package pl.edu.agh.tgk.penrosesweeper.logic.generation;
+package pl.edu.agh.tgk.penrosesweeper.logic.rhombus;
 
 import com.badlogic.gdx.math.Vector2;
-import pl.edu.agh.tgk.penrosesweeper.logic.Rhombus;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static pl.edu.agh.tgk.penrosesweeper.logic.generation.PenroseTiling.PSI;
+import static pl.edu.agh.tgk.penrosesweeper.logic.rhombus.PenroseTiling.PSI;
 
 public class RhombusesGenerator {
 
     private RhombusesGenerator() {}
 
-    public static List<Rhombus> generateRhombuses(double boardSize, int n) {
+    public static List<Rhombus> generateRhombuses(double screenSize, int nGen) {
 
         // Rotation calculations
         double theta = Math.PI / 5;
@@ -44,7 +43,7 @@ public class RhombusesGenerator {
         PenroseTiling.Complex DD = AA1.subtract(A2).add(C1.multiply(1/PSI));
 
         // Create PenroseP3 instance
-        PenroseTiling.PenroseP3 tiling = new PenroseTiling.PenroseP3(n);
+        PenroseTiling.PenroseP3 tiling = new PenroseTiling.PenroseP3(nGen);
         tiling.setInitialTiles(List.of(
 //            new PenroseTiling.BtileL(AA1, A2, C1.multiply(1/PSI)),
 //            new PenroseTiling.BtileL(AA1, DD, C1.multiply(1/PSI)),
@@ -69,7 +68,7 @@ public class RhombusesGenerator {
                 );
             })
             .collect(toList());
-        float scale = (float) (boardSize / (2 * getMax(rhombuses)));
+        float scale = (float) (screenSize / (2 * getMax(rhombuses)));
 
         return rhombuses.stream().map(it -> new Rhombus(it, scale)).toList();
     }

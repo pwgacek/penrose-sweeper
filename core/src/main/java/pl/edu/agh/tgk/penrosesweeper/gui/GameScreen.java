@@ -1,38 +1,42 @@
-package pl.edu.agh.tgk.penrosesweeper;
+package pl.edu.agh.tgk.penrosesweeper.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import pl.edu.agh.tgk.penrosesweeper.logic.Board;
-import pl.edu.agh.tgk.penrosesweeper.logic.Tile;
+import pl.edu.agh.tgk.penrosesweeper.gui.font.NumbersFont;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.ExplosionTexture;
+import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
+import pl.edu.agh.tgk.penrosesweeper.logic.Difficulty;
+import pl.edu.agh.tgk.penrosesweeper.logic.board.Board;
+import pl.edu.agh.tgk.penrosesweeper.logic.board.BoardSize;
+import pl.edu.agh.tgk.penrosesweeper.logic.board.Tile;
 
 import java.util.Optional;
 
 public class GameScreen implements Screen {
-    private static final int BOARD_SIZE = 1600;
+    private static final int SCREEN_SIZE = 1600;
+    private static final BoardSize BOARD_SIZE = BoardSize.BIG;
+    private static final Difficulty DIFFICULTY = Difficulty.EASY;
     private final Board board;
 
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
-    private BitmapFont font;
-    private Texture explosionTexture;
-    private Texture flagTexture;
+    private NumbersFont font;
+    private ExplosionTexture explosionTexture;
+    private FlagTexture flagTexture;
     private OrthographicCamera camera;
 
     private boolean isBoardInitialized = false;
     private boolean isGameOver = false;
+
     public GameScreen() {
-        board = new Board(BOARD_SIZE, 10, 5);
+        board = new Board(SCREEN_SIZE, DIFFICULTY, BOARD_SIZE);
     }
 
     @Override
@@ -40,23 +44,13 @@ public class GameScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Lato-Regular.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.genMipMaps = true;
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearLinear;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
-
-        font = generator.generateFont(parameter);
-        explosionTexture = new Texture(Gdx.files.internal("explosionv3.png"));
-        flagTexture = new Texture(Gdx.files.internal("flag4.png"));
-        generator.dispose();
-
+        font = new NumbersFont(spriteBatch, BOARD_SIZE);
+        explosionTexture = new ExplosionTexture(spriteBatch, BOARD_SIZE);
+        flagTexture = new FlagTexture(spriteBatch, BOARD_SIZE);
 
         camera = new OrthographicCamera();
     }
+
 
 
     @Override
@@ -104,11 +98,11 @@ public class GameScreen implements Screen {
 
 
         if (isGameOver) {
-            board.getTiles().stream().filter(it -> !it.isMine()).forEach(tile -> tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null))));
-            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(shapeRenderer ,spriteBatch, explosionTexture));
+            board.getTiles().stream().filter(it -> !it.isMine()).forEach(tile -> tile.render(shapeRenderer, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null))));
+            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(shapeRenderer, explosionTexture));
         } else {
             for (Tile tile : board.getTiles()) {
-                tile.render(shapeRenderer, spriteBatch, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null)));
+                tile.render(shapeRenderer, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null)));
             }
         }
         spriteBatch.begin();
@@ -127,11 +121,11 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         float viewportHeight, viewportWidth, aspectRatio;
         if ( width > height) {
-            viewportHeight = BOARD_SIZE;
+            viewportHeight = SCREEN_SIZE;
             aspectRatio = (float) width / height;
             viewportWidth = viewportHeight * aspectRatio;
         } else {
-            viewportWidth = BOARD_SIZE;
+            viewportWidth = SCREEN_SIZE;
             aspectRatio = (float) height / width;
             viewportHeight = viewportWidth * aspectRatio;
         }

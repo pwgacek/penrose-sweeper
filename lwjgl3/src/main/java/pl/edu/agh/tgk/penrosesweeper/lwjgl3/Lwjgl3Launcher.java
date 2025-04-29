@@ -1,10 +1,8 @@
 package pl.edu.agh.tgk.penrosesweeper.lwjgl3;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import pl.edu.agh.tgk.penrosesweeper.Main;
+import pl.edu.agh.tgk.penrosesweeper.gui.Main;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {

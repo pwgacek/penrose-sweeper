@@ -1,4 +1,4 @@
-package pl.edu.agh.tgk.penrosesweeper.logic.generation;
+package pl.edu.agh.tgk.penrosesweeper.logic.rhombus;
 
 import java.util.*;
 import java.util.stream.Collectors;
