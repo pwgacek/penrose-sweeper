@@ -63,8 +63,8 @@ public class Board {
     }
 
     private Vector2 roundVector(Vector2 v) {
-        float x = new BigDecimal(v.x).setScale(4, RoundingMode.DOWN).floatValue();
-        float y = new BigDecimal(v.y).setScale(4, RoundingMode.DOWN).floatValue();
+        float x = new BigDecimal(v.x).setScale(2, RoundingMode.DOWN).floatValue();
+        float y = new BigDecimal(v.y).setScale(2, RoundingMode.DOWN).floatValue();
         return new Vector2(x, y);
     }
 
@@ -92,7 +92,7 @@ public class Board {
         int mineCount = (int) Math.ceil((minePercentage * tiles.size() / 100f));
         List<Integer> possibleMineIndices = getPossibleMineIndices(startingTile);
 
-        Random rand = new Random();
+        Random rand = new Random(42);
         for (int i = 0; i < mineCount; i++) {
             int mineIndex = possibleMineIndices.remove(rand.nextInt(possibleMineIndices.size()));
             tiles.get(mineIndex).setMine();
