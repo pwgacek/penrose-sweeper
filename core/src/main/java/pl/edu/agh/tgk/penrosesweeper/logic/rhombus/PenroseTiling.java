@@ -5,14 +5,14 @@ import java.util.stream.Collectors;
 
 public class PenroseTiling {
 
-    public static final float TOL = 1e-5F;
-    public static final float PSI = (float) ((Math.sqrt(5) - 1) / 2);
-    public static final float PSI2 = 1 - PSI;
+    public static final double TOL = 1e-5F;
+    public static final double PSI = (Math.sqrt(5) - 1) / 2;
+    public static final double PSI2 = 1 - PSI;
 
     static class Complex implements Comparable<Complex >{
-        float real, imag;
+        double real, imag;
 
-        Complex(float real, float imag) {
+        Complex(double real, double imag) {
             this.real = real;
             this.imag = imag;
         }
@@ -25,13 +25,13 @@ public class PenroseTiling {
             return new Complex(this.real - other.real, this.imag - other.imag);
         }
 
-        Complex multiply(float scalar) {
+        Complex multiply(double scalar) {
             return new Complex(this.real * scalar, this.imag * scalar);
         }
 
         Complex multiply(Complex other) {
-            float realPart = this.real * other.real - this.imag * other.imag;
-            float imagPart = this.real * other.imag + this.imag * other.real;
+            double realPart = this.real * other.real - this.imag * other.imag;
+            double imagPart = this.real * other.imag + this.imag * other.real;
             return new Complex(realPart, imagPart);
         }
 
@@ -49,11 +49,11 @@ public class PenroseTiling {
 
         @Override
         public int compareTo(Complex other) {
-            int realComparison = Float.compare(this.real, other.real);
+            int realComparison = Double.compare(this.real, other.real);
             if (realComparison != 0) {
                 return realComparison;
             }
-            return Float.compare(this.imag, other.imag);
+            return Double.compare(this.imag, other.imag);
         }
 
         @Override
@@ -77,7 +77,7 @@ public class PenroseTiling {
         }
 
         Complex centre() {
-            return A.add(C).multiply(0.5f);
+            return A.add(C).multiply(0.5d);
         }
 
 

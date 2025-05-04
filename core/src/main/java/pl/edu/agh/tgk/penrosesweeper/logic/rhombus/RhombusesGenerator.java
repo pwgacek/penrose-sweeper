@@ -3,6 +3,7 @@ package pl.edu.agh.tgk.penrosesweeper.logic.rhombus;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -56,27 +57,30 @@ public class RhombusesGenerator {
 
         // Generate tiling and write to SVG
         tiling.makeTiling();
+        float scale = (float) (screenSize / (2 * getMax(tiling.getElements())));
 
-        List<Rhombus> rhombuses = tiling.getElements().stream()
+        return tiling.getElements().stream()
             .map(element -> {
                 PenroseTiling.Complex D = element.A.subtract(element.B).add(element.C);
                 return new Rhombus(
-                    new Vector2(element.A.real, element.A.imag),
-                    new Vector2(element.B.real, element.B.imag),
-                    new Vector2(element.C.real, element.C.imag),
-                    new Vector2(D.real, D.imag)
+                    new Vector2((float) element.A.real * scale, (float) element.A.imag * scale),
+                    new Vector2((float) element.B.real * scale, (float) element.B.imag * scale),
+                    new Vector2((float) element.C.real * scale, (float) element.C.imag * scale),
+                    new Vector2((float) D.real  * scale, (float) D.imag  * scale)
                 );
             })
             .collect(toList());
-        float scale = (float) (screenSize / (2 * getMax(rhombuses)));
 
-        return rhombuses.stream().map(it -> new Rhombus(it, scale)).toList();
     }
 
-    private static double getMax(List<Rhombus> rhombuses) {
-        return rhombuses.stream()
-            .flatMap(rhombus -> Stream.of(rhombus.vA().x, rhombus.vB().x, rhombus.vC().x, rhombus.vD().x, rhombus.vA().y, rhombus.vB().y, rhombus.vC().y, rhombus.vD().y))
-            .mapToDouble(Float::doubleValue)
+    private static double getMax(List<PenroseTiling.RobinsonTriangle> triangles) {
+        return triangles.stream()
+            .flatMap(triangle -> Stream.of(
+                triangle.A,
+                triangle.B,
+                triangle.C,
+                triangle.A.subtract(triangle.B).add(triangle.C)
+            )).flatMapToDouble(it -> DoubleStream.of(it.real, it.imag))
             .map(Math::abs)
             .max()
             .orElse(0);
