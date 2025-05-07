@@ -1,5 +1,9 @@
 Lato-Regular.ttf
+default.fnt
 explosionv2.png
 explosionv3.png
 figures.txt
 flag4.png
+uiskin.atlas
+uiskin.json
+uiskin.png
