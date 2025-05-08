@@ -12,26 +12,32 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import pl.edu.agh.tgk.penrosesweeper.gui.dialog.GameOverDialog;
+import pl.edu.agh.tgk.penrosesweeper.gui.dialog.GameWonDialog;
 import pl.edu.agh.tgk.penrosesweeper.gui.font.NumbersFont;
 import pl.edu.agh.tgk.penrosesweeper.gui.label.TimerLabel;
 import pl.edu.agh.tgk.penrosesweeper.gui.texture.ExplosionTexture;
 import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
 import pl.edu.agh.tgk.penrosesweeper.logic.Difficulty;
+import pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Board;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.BoardSize;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Tile;
 
 import java.util.Optional;
 
+import static pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase.*;
+
 public class GameScreen implements Screen {
     private static final int SCREEN_SIZE = 1600;
-    private static final BoardSize BOARD_SIZE = BoardSize.BIG;
+    private static final BoardSize BOARD_SIZE = BoardSize.SMALL;
     private static final Difficulty DIFFICULTY = Difficulty.EASY;
     private final Board board;
+    private GameplayPhase phase = NOT_STARTED;
 
     private Stage mainStage;
     private Stage boardStage;
     private GameOverDialog gameOverDialog;
+    private GameWonDialog gameWonDialog;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
     private NumbersFont font;
@@ -40,9 +46,6 @@ public class GameScreen implements Screen {
     private TimerLabel timerLabel;
     private long timeStart;
     private OrthographicCamera camera;
-
-    private boolean isBoardInitialized = false;
-    private boolean isGameOver = false;
 
     public GameScreen() {
         board = new Board(SCREEN_SIZE, DIFFICULTY, BOARD_SIZE);
@@ -64,6 +67,7 @@ public class GameScreen implements Screen {
         flagTexture = new FlagTexture(spriteBatch, BOARD_SIZE);
         timerLabel = new TimerLabel(mainStage);
         gameOverDialog = new GameOverDialog();
+        gameWonDialog = new GameWonDialog();
     }
 
 
@@ -72,63 +76,67 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         boardStage.act(delta);
         boardStage.getViewport().apply();
 
-
         shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.setAutoShapeType(true);
         spriteBatch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
 
-        Vector2 coordinates = getMouseCoordinates();
-        Optional<Tile> optionalTile = board.getTile(coordinates);
+        Optional<Tile> optionalTile = board.getTile(getMouseCoordinates());
 
-
-        if (!isBoardInitialized) {
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                optionalTile.ifPresent(tile -> {
-                    board.initialize(tile);
-                    isBoardInitialized = true;
-                    tile.uncover();
-                    timeStart = System.currentTimeMillis();
-                });
-            }
-        }
-        else if (!isGameOver) {
-            updateTimer();
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                 optionalTile.ifPresent(tile -> {
-                    if (tile.uncover()) {
-                        if (tile.isMine()) {
-                            isGameOver = true;
-                            gameOverDialog.showWithDelay(mainStage, 0.5f);
+        switch(phase) {
+            case NOT_STARTED -> {
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    optionalTile.ifPresent(tile -> {
+                        board.initialize(tile);
+                        phase = RUNNING;
+                        tile.uncover();
+                        timeStart = System.currentTimeMillis();
+                    });
+                }
+            } case RUNNING -> {
+                updateTimer();
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    optionalTile.ifPresent(tile -> {
+                        if (tile.uncover()) {
+                            if (tile.isMine()) {
+                                phase = ENDED;
+                                board.explodeAllMines();
+                                gameOverDialog.showWithDelay(mainStage, 0.5f);
+                            } else if (board.areAllNonMinesUncovered()) {
+                                phase = ENDED;
+                                board.markAllMines();
+                                gameWonDialog.setTimeString(timerLabel.getText().toString());
+                                gameWonDialog.showWithDelay(mainStage, 0.5f);
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-                board.getTile(getMouseCoordinates()).ifPresent(Tile::toggleMarked);
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+                    board.getTile(getMouseCoordinates()).ifPresent(Tile::toggleMarked);
+                }
             }
         }
-        shapeRenderer.setAutoShapeType(true);
-
-        if (isGameOver) {
-            board.getTiles().stream().filter(it -> !it.isMine()).forEach(tile -> tile.render(shapeRenderer, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null))));
-            board.getTiles().stream().filter(Tile::isMine).forEach(tile -> tile.renderGameOver(shapeRenderer, explosionTexture));
-        } else {
-            for (Tile tile : board.getTiles()) {
-                tile.render(shapeRenderer, font, flagTexture ,!isGameOver && tile.equals(optionalTile.orElse(null)));
-            }
-        }
+        renderBoard(optionalTile.orElse(null));
 
         mainStage.getViewport().apply();
         mainStage.draw();
     }
+
+    private void renderBoard(Tile optionalTile) {
+        board.getTiles().stream()
+            .sorted((tile1, tile2) -> Boolean.compare(tile1.isMine(), tile2.isMine()))
+            .forEach(it -> it.render(shapeRenderer, font, flagTexture, explosionTexture, phase != ENDED && it.equals(optionalTile)));
+
+
+    }
+
 
     private void updateTimer() {
         long elapsedTime = System.currentTimeMillis() - timeStart;
@@ -146,6 +154,7 @@ public class GameScreen implements Screen {
         mainStage.getViewport().update(width, height, true);
         mainStage.getViewport().setScreenPosition(0, 0);
         gameOverDialog.setPosition((width - gameOverDialog.getWidth())/ 2f  , (height - gameOverDialog.getHeight()) / 2f);
+        gameWonDialog.setPosition((width - gameWonDialog.getWidth())/ 2f  , (height - gameWonDialog.getHeight()) / 2f);
         timerLabel.setPosition(0, mainStage.getViewport().getWorldHeight() - timerLabel.getHeight());
 
         camera.position.set(0, 0, 0);

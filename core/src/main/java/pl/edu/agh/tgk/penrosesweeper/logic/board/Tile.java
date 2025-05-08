@@ -58,6 +58,14 @@ public class Tile {
         return false;
     }
 
+    public boolean isCovered() {
+        return isCovered;
+    }
+
+    public boolean isMarkedAsMine() {
+        return isMarkedAsMine;
+    }
+
     public boolean isMine(){
         return value == -1;
     }
@@ -72,23 +80,22 @@ public class Tile {
         return this.rhombus.isPointInside(point);
     }
 
-    public void render(ShapeRenderer shapeRenderer, NumbersFont font, FlagTexture flagTexture, boolean isHovered) {
-
-        if (isCovered) {
-            this.rhombus.renderFilled(shapeRenderer, isHovered ? Color.GRAY : Color.DARK_GRAY);
-        } else if (value > 0) {
-            this.rhombus.renderValue(font, value);
-        }
+    public void render(ShapeRenderer shapeRenderer, NumbersFont font, FlagTexture flagTexture, ExplosionTexture explosionTexture, boolean isHovered) {
         if (isMarkedAsMine) {
-            this.rhombus.renderMarked(flagTexture);
+            this.rhombus.renderMarked(flagTexture, shapeRenderer, isHovered ? Color.GRAY : Color.DARK_GRAY);
+        } else if (isCovered) {
+            this.rhombus.renderCovered(shapeRenderer, isHovered ? Color.GRAY : Color.DARK_GRAY);
+        } else {
+            if (value > 0) {
+                this.rhombus.renderValue(shapeRenderer, font, value);
+            } else if (value == 0) {
+                this.rhombus.renderBorders(shapeRenderer);
+            } else {
+                this.rhombus.renderExplosion(shapeRenderer, explosionTexture);
+            }
         }
-        this.rhombus.renderBorders(shapeRenderer);
+
+
 
     }
-
-    public void renderGameOver(ShapeRenderer shapeRenderer, ExplosionTexture explosionTexture) {
-            this.rhombus.renderExplosion(shapeRenderer, explosionTexture);
-    }
-
-
 }

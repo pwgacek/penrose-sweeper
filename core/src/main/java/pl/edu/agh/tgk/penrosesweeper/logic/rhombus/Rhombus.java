@@ -9,14 +9,6 @@ import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
 
 public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
 
-    public Rhombus(Rhombus rhombus, float scale) {
-        this(scaleVector(rhombus.vA, scale), scaleVector(rhombus.vB, scale), scaleVector(rhombus.vC, scale), scaleVector(rhombus.vD, scale));
-    }
-
-    private static Vector2 scaleVector(Vector2 vector, float scale) {
-        return new Vector2(vector.x * scale, vector.y * scale);
-    }
-
     public boolean isPointInside(Vector2 point) {
         return sameSide(point, vA, vB,vC) &&
             sameSide(point, vB, vC, vD) &&
@@ -42,8 +34,9 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
         return new Vector2(centerX, centerY);
     }
 
-    public void renderValue(NumbersFont font, int value) {
+    public void renderValue(ShapeRenderer shapeRenderer, NumbersFont font, int value) {
         font.draw(getCenter(), value);
+        renderBorders(shapeRenderer);
     }
 
     public void renderBorders(ShapeRenderer shapeRenderer) {
@@ -61,7 +54,7 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
         shapeRenderer.end();
     }
 
-    public void renderFilled(ShapeRenderer shapeRenderer, Color color) {
+    public void renderCovered(ShapeRenderer shapeRenderer, Color color) {
         shapeRenderer.begin();
         shapeRenderer.setColor(color);
         shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
@@ -77,9 +70,12 @@ public record Rhombus(Vector2 vA, Vector2 vB, Vector2 vC, Vector2 vD) {
             vC.x, vC.y
         );
         shapeRenderer.end();
+        renderBorders(shapeRenderer);
     }
 
-    public void renderMarked(FlagTexture flagTexture) {
+    public void renderMarked(FlagTexture flagTexture, ShapeRenderer shapeRenderer, Color color) {
+        renderCovered(shapeRenderer, color);
+        renderBorders(shapeRenderer);
         flagTexture.draw(getCenter());
 
     }

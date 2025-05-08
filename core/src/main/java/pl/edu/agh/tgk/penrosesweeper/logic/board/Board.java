@@ -128,4 +128,22 @@ public class Board {
     public Optional<Tile> getTile(Vector2 point) {
         return tiles.stream().filter(t -> t.isPointInside(point)).findFirst();
     }
+
+    public boolean areAllNonMinesUncovered() {
+        return tiles.stream().filter(it -> !it.isMine()).noneMatch(Tile::isCovered);
+    }
+
+    public void markAllMines() {
+        tiles.stream().filter(tile -> tile.isMine() && !tile.isMarkedAsMine()).forEach(Tile::toggleMarked);
+    }
+
+    public void explodeAllMines() {
+        tiles.stream().filter(Tile::isMine).forEach(tile -> {
+            if (tile.isMarkedAsMine()) {
+                tile.toggleMarked();
+            }
+            tile.uncover();
+        });
+
+    }
 }
