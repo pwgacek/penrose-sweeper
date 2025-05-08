@@ -31,7 +31,7 @@ import static pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase.*;
 public class GameScreen implements Screen {
     private static final int SCREEN_SIZE = 1600;
     private static final BoardSize BOARD_SIZE = BoardSize.SMALL;
-    private static final Difficulty DIFFICULTY = Difficulty.HARD;
+    private static final Difficulty DIFFICULTY = Difficulty.EASY;
     private final Board board;
     private GameplayPhase phase = NOT_STARTED;
     private Stage mainStage;
@@ -113,6 +113,7 @@ public class GameScreen implements Screen {
                             } else if (board.areAllNonMinesUncovered()) {
                                 phase = ENDED;
                                 board.markAllMines();
+                                flagsLeftHorizontalGroup.setValue(board.getFlagsLeft());
                                 gameWonDialog.setTimeString(timerLabel.getText().toString());
                                 gameWonDialog.showWithDelay(mainStage, 0.5f);
                             }
@@ -120,9 +121,9 @@ public class GameScreen implements Screen {
                     });
                 }
 
-                if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+                else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
                     board.getTile(getMouseCoordinates()).ifPresent(it -> {
-                        if (board.toggleFlagMarked(it)) {
+                        if (it.isCovered() && board.toggleFlagMarked(it)) {
                             flagsLeftHorizontalGroup.setValue(board.getFlagsLeft());
                         }
                     });

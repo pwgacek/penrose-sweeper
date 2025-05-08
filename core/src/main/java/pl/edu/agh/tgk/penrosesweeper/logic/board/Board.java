@@ -135,7 +135,7 @@ public class Board {
     }
 
     public void markAllMines() {
-        tiles.stream().filter(tile -> tile.isMine() && !tile.isMarkedAsMine()).forEach(Tile::toggleMarked);
+        tiles.stream().filter(tile -> tile.isMine() && !tile.isMarkedAsMine()).forEach(this::toggleFlagMarked);
     }
 
     public void explodeAllMines() {
