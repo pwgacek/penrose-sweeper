@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import pl.edu.agh.tgk.penrosesweeper.gui.dialog.GameOverDialog;
 import pl.edu.agh.tgk.penrosesweeper.gui.dialog.GameWonDialog;
 import pl.edu.agh.tgk.penrosesweeper.gui.font.NumbersFont;
+import pl.edu.agh.tgk.penrosesweeper.gui.horizontalgroup.FlagsLeftHorizontalGroup;
 import pl.edu.agh.tgk.penrosesweeper.gui.label.TimerLabel;
 import pl.edu.agh.tgk.penrosesweeper.gui.texture.ExplosionTexture;
 import pl.edu.agh.tgk.penrosesweeper.gui.texture.FlagTexture;
@@ -30,10 +31,9 @@ import static pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase.*;
 public class GameScreen implements Screen {
     private static final int SCREEN_SIZE = 1600;
     private static final BoardSize BOARD_SIZE = BoardSize.SMALL;
-    private static final Difficulty DIFFICULTY = Difficulty.EASY;
+    private static final Difficulty DIFFICULTY = Difficulty.HARD;
     private final Board board;
     private GameplayPhase phase = NOT_STARTED;
-
     private Stage mainStage;
     private Stage boardStage;
     private GameOverDialog gameOverDialog;
@@ -44,6 +44,7 @@ public class GameScreen implements Screen {
     private ExplosionTexture explosionTexture;
     private FlagTexture flagTexture;
     private TimerLabel timerLabel;
+    private FlagsLeftHorizontalGroup flagsLeftHorizontalGroup;
     private long timeStart;
     private OrthographicCamera camera;
 
@@ -66,6 +67,7 @@ public class GameScreen implements Screen {
         explosionTexture = new ExplosionTexture(spriteBatch, BOARD_SIZE);
         flagTexture = new FlagTexture(spriteBatch, BOARD_SIZE);
         timerLabel = new TimerLabel(mainStage);
+        flagsLeftHorizontalGroup = new FlagsLeftHorizontalGroup(mainStage, spriteBatch, board.getFlagsLeft());
         gameOverDialog = new GameOverDialog();
         gameWonDialog = new GameWonDialog();
     }
@@ -119,7 +121,11 @@ public class GameScreen implements Screen {
                 }
 
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-                    board.getTile(getMouseCoordinates()).ifPresent(Tile::toggleMarked);
+                    board.getTile(getMouseCoordinates()).ifPresent(it -> {
+                        if (board.toggleFlagMarked(it)) {
+                            flagsLeftHorizontalGroup.setValue(board.getFlagsLeft());
+                        }
+                    });
                 }
             }
         }
@@ -153,9 +159,12 @@ public class GameScreen implements Screen {
         boardStage.getViewport().update(width, height, true);
         mainStage.getViewport().update(width, height, true);
         mainStage.getViewport().setScreenPosition(0, 0);
+
         gameOverDialog.setPosition((width - gameOverDialog.getWidth())/ 2f  , (height - gameOverDialog.getHeight()) / 2f);
         gameWonDialog.setPosition((width - gameWonDialog.getWidth())/ 2f  , (height - gameWonDialog.getHeight()) / 2f);
-        timerLabel.setPosition(0, mainStage.getViewport().getWorldHeight() - timerLabel.getHeight());
+
+        timerLabel.setPosition();
+        flagsLeftHorizontalGroup.setPosition();
 
         camera.position.set(0, 0, 0);
         camera.update();

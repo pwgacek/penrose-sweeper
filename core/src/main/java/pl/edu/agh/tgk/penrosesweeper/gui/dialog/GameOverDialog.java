@@ -16,7 +16,6 @@ public class GameOverDialog extends Dialog {
         this.button("Restart", true);
         this.button("Exit", false);
         this.text("Game Over! You hit a mine.");
-        this.setMovable(false);
     }
 
     @Override

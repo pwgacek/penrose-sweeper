@@ -1,12 +1,9 @@
 package pl.edu.agh.tgk.penrosesweeper.gui.font;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.BoardSize;
 
@@ -17,22 +14,7 @@ public class NumbersFont extends BitmapFont {
 
     public NumbersFont(SpriteBatch spriteBatch, BoardSize boardSize) {
         this.spriteBatch = spriteBatch;
-        this.font = generateFont(boardSize);
-    }
-
-    public BitmapFont generateFont(BoardSize boardSize) {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Lato-Regular.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.genMipMaps = true;
-        parameter.size = getFontSize(boardSize);
-        parameter.color = Color.WHITE;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearLinear;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
-
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
-        return font;
+        this.font = FontGenerator.generate(getFontSize(boardSize), Color.WHITE);
     }
 
     private int getFontSize(BoardSize boardSize) {

@@ -15,7 +15,6 @@ public class GameWonDialog extends Dialog {
 
         this.button("Restart", true);
         this.button("Exit", false);
-        this.setMovable(false);
     }
 
     @Override

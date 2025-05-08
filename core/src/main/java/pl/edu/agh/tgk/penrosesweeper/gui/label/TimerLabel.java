@@ -1,37 +1,20 @@
 package pl.edu.agh.tgk.penrosesweeper.gui.label;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import pl.edu.agh.tgk.penrosesweeper.gui.font.FontGenerator;
 
 
 public class TimerLabel extends Label {
+    private final Stage stage;
 
     public TimerLabel(Stage stage) {
-        super("00:000", new LabelStyle(generateFont(), com.badlogic.gdx.graphics.Color.WHITE));
+        super("00:000", new LabelStyle(FontGenerator.generate(32, Color.WHITE), Color.WHITE));
+        this.stage = stage;
         setAlignment(Align.topLeft);
-
-        setPosition(0,stage.getViewport().getWorldHeight() - getHeight());
         stage.addActor(this);
-    }
-
-    private static BitmapFont generateFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Lato-Regular.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.genMipMaps = true;
-        parameter.size = 32;
-        parameter.color = com.badlogic.gdx.graphics.Color.WHITE;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearLinear;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
-
-        BitmapFont font = generator.generateFont(parameter);
-        generator.dispose();
-        return font;
     }
 
     public void setTime(long time) {
@@ -50,5 +33,9 @@ public class TimerLabel extends Label {
         }
 
         setText(timeText);
+    }
+
+    public void setPosition() {
+        setPosition(10,stage.getViewport().getWorldHeight() - getHeight());
     }
 }

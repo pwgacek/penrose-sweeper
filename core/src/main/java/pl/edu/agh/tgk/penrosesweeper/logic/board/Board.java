@@ -23,12 +23,14 @@ import java.util.Set;
 
 public class Board {
     private final List<Tile> tiles;
-    private final int minePercentage;
+    private final int mineCount;
+    private int flagsLeft;
 
     public Board(double screenSize, Difficulty difficulty, BoardSize size) {
-        this.minePercentage = difficulty.minePercentage;
 //        this.tiles = loadRhombuses().stream().map(Tile::new).toList();
         this.tiles = RhombusesGenerator.generateRhombuses(screenSize, getNGen(size)).stream().map(Tile::new).toList();
+        mineCount = (int) Math.ceil((difficulty.minePercentage * tiles.size() / 100f));
+        flagsLeft = mineCount;
         setNeighbours();
     }
 
@@ -89,7 +91,6 @@ public class Board {
     }
 
     public void initialize(Tile startingTile) {
-        int mineCount = (int) Math.ceil((minePercentage * tiles.size() / 100f));
         List<Integer> possibleMineIndices = getPossibleMineIndices(startingTile);
 
         Random rand = new Random(42);
@@ -145,5 +146,23 @@ public class Board {
             tile.uncover();
         });
 
+    }
+
+    public int getFlagsLeft() {
+        return flagsLeft;
+    }
+
+    public boolean toggleFlagMarked(Tile tile) {
+        if (tile.isMarkedAsMine()) {
+            tile.toggleMarked();
+            flagsLeft++;
+            return true;
+        }
+        if (flagsLeft > 0) {
+            tile.toggleMarked();
+            flagsLeft--;
+            return true;
+        }
+        return false;
     }
 }

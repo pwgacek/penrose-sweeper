@@ -17,6 +17,13 @@ public class FlagTexture extends Texture {
         this.size = getSize(boardSize);
     }
 
+    public FlagTexture(SpriteBatch spriteBatch, int size) {
+        super(Gdx.files.internal("flag4.png"));
+        this.spriteBatch = spriteBatch;
+        this.size = size;
+    }
+
+
     private static float getSize(BoardSize boardSize) {
         return switch (boardSize) {
             case SMALL -> 100f;
