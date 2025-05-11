@@ -2,8 +2,10 @@ Lato-Regular.ttf
 default.fnt
 explosionv2.png
 explosionv3.png
-figures.txt
 flag4.png
+rhombuses/large.txt
+rhombuses/medium.txt
+rhombuses/small.txt
 uiskin.atlas
 uiskin.json
 uiskin.png

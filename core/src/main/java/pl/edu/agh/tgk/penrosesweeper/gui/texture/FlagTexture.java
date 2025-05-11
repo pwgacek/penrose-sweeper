@@ -27,8 +27,8 @@ public class FlagTexture extends Texture {
     private static float getSize(BoardSize boardSize) {
         return switch (boardSize) {
             case SMALL -> 100f;
-            case NORMAL -> 50f;
-            case BIG -> 25f;
+            case MEDIUM -> 50f;
+            case LARGE -> 25f;
         };
     }
 

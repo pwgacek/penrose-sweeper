@@ -20,8 +20,8 @@ public class NumbersFont extends BitmapFont {
     private int getFontSize(BoardSize boardSize) {
         return switch (boardSize) {
             case SMALL -> 48;
-            case NORMAL -> 32;
-            case BIG -> 16;
+            case MEDIUM -> 32;
+            case LARGE -> 16;
         };
     }
 

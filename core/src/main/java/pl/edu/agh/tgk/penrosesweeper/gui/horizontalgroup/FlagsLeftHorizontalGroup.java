@@ -27,6 +27,7 @@ public class FlagsLeftHorizontalGroup extends HorizontalGroup {
 
         padRight(10);
         pack();
+        setHeight(label.getHeight());
 
 
         stage.addActor(this);
