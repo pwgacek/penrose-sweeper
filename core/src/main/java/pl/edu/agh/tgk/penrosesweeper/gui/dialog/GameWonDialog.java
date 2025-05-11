@@ -1,29 +1,16 @@
 package pl.edu.agh.tgk.penrosesweeper.gui.dialog;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Timer;
-import pl.edu.agh.tgk.penrosesweeper.gui.GameScreen;
-import pl.edu.agh.tgk.penrosesweeper.gui.Main;
 
-public class GameWonDialog extends Dialog {
+
+public class GameWonDialog extends MyDialog {
 
     public GameWonDialog() {
-        super("Congratulations!", new Skin(Gdx.files.internal("uiskin.json")));
+        super("Congratulations!");
 
         this.button("Restart", true);
         this.button("Exit", false);
-    }
-
-    @Override
-    protected void result(Object object) {
-        if ((boolean) object) {
-            restartGame();
-        } else {
-            Gdx.app.exit();
-        }
     }
 
     public void setTimeString(String timeString) {
@@ -41,8 +28,4 @@ public class GameWonDialog extends Dialog {
         }, delay);
     }
 
-
-    private void restartGame() {
-        ((Main) Gdx.app.getApplicationListener()).setScreen(new GameScreen());
-    }
 }
