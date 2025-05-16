@@ -1,8 +1,10 @@
 package pl.edu.agh.tgk.penrosesweeper.gui;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,12 +30,12 @@ import java.util.Optional;
 
 import static pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase.*;
 
-public class GameScreen implements Screen {
+public class BoardScreen implements Screen {
     private static final int SCREEN_SIZE = 1600;
-    private static final BoardSize BOARD_SIZE = BoardSize.SMALL;
-    private static final Difficulty DIFFICULTY = Difficulty.EASY;
+    private final BoardSize boardSize;
     private final Board board;
     private GameplayPhase phase = NOT_STARTED;
+    private final Game game;
     private Stage mainStage;
     private Stage boardStage;
     private GameOverDialog gameOverDialog;
@@ -48,8 +50,11 @@ public class GameScreen implements Screen {
     private long timeStart;
     private OrthographicCamera camera;
 
-    public GameScreen() {
-        board = new Board(SCREEN_SIZE, DIFFICULTY, BOARD_SIZE);
+    public BoardScreen(Game game, BoardSize boardSize, Difficulty difficulty) {
+        this.game = game;
+        this.boardSize = boardSize;
+        this.board = new Board(SCREEN_SIZE, difficulty, boardSize);
+
     }
 
     @Override
@@ -63,13 +68,13 @@ public class GameScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
 
-        font = new NumbersFont(spriteBatch, BOARD_SIZE);
-        explosionTexture = new ExplosionTexture(spriteBatch, BOARD_SIZE);
-        flagTexture = new FlagTexture(spriteBatch, BOARD_SIZE);
+        font = new NumbersFont(spriteBatch, boardSize);
+        explosionTexture = new ExplosionTexture(spriteBatch, boardSize);
+        flagTexture = new FlagTexture(spriteBatch, boardSize);
         timerLabel = new TimerLabel(mainStage);
         flagsLeftHorizontalGroup = new FlagsLeftHorizontalGroup(mainStage, spriteBatch, board.getFlagsLeft());
-        gameOverDialog = new GameOverDialog();
-        gameWonDialog = new GameWonDialog();
+        gameOverDialog = new GameOverDialog(game);
+        gameWonDialog = new GameWonDialog(game);
     }
 
 
@@ -77,6 +82,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, 1);
 
         boardStage.act(delta);
         boardStage.getViewport().apply();

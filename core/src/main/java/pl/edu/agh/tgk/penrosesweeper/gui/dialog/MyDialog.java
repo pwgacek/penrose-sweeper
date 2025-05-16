@@ -1,5 +1,6 @@
 package pl.edu.agh.tgk.penrosesweeper.gui.dialog;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -8,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Align;
-import pl.edu.agh.tgk.penrosesweeper.gui.GameScreen;
-import pl.edu.agh.tgk.penrosesweeper.gui.Main;
+import pl.edu.agh.tgk.penrosesweeper.gui.MenuScreen;
 import pl.edu.agh.tgk.penrosesweeper.gui.font.FontGenerator;
 
 public abstract class MyDialog extends Dialog {
@@ -21,7 +21,7 @@ public abstract class MyDialog extends Dialog {
     private final float buttonPaddding = 15f;
 
     private static final Skin skin;
-
+    private final Game game;
     static {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         Window.WindowStyle ws = new Window.WindowStyle(skin.get(Window.WindowStyle.class));
@@ -29,8 +29,9 @@ public abstract class MyDialog extends Dialog {
         skin.add("default", ws, Window.WindowStyle.class);
     }
 
-    public MyDialog(String title) {
+    public MyDialog(Game game, String title) {
         super(title, skin);
+        this.game = game;
         this.setup();
     }
 
@@ -71,14 +72,14 @@ public abstract class MyDialog extends Dialog {
     @Override
     protected void result(Object object) {
         if ((boolean) object) {
-            restartGame();
+            goToMenu();
         } else {
             Gdx.app.exit();
         }
     }
 
-    private void restartGame() {
-        ((Main) Gdx.app.getApplicationListener()).setScreen(new GameScreen());
+    private void goToMenu() {
+        game.setScreen(new MenuScreen(game));
     }
 
     @Override

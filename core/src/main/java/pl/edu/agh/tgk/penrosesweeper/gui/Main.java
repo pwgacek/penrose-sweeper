@@ -1,15 +1,19 @@
 package pl.edu.agh.tgk.penrosesweeper.gui;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
     @Override
     public void create() {
-        int height = Gdx.graphics.getDisplayMode().height;
+        setScreen(new MenuScreen(this));
+    }
+    @Override
+    public void render () {
+        super.render();
+    }
 
-        Gdx.graphics.setWindowedMode(height, height);
-        setScreen(new GameScreen());
+    @Override
+    public void dispose () {
     }
 }
