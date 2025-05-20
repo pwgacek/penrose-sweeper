@@ -25,8 +25,8 @@ import pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Board;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.BoardSize;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Tile;
-import pl.edu.agh.tgk.penrosesweeper.perstistence.Leaderboard;
-import pl.edu.agh.tgk.penrosesweeper.perstistence.LeaderboardEntry;
+import pl.edu.agh.tgk.penrosesweeper.logic.perstistence.Leaderboard;
+import pl.edu.agh.tgk.penrosesweeper.logic.perstistence.LeaderboardEntry;
 
 import java.util.Optional;
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import pl.edu.agh.tgk.penrosesweeper.gui.font.FontGenerator;
+import pl.edu.agh.tgk.penrosesweeper.logic.TimeUtil;
 
 
 public class TimerLabel extends Label {
@@ -20,21 +21,7 @@ public class TimerLabel extends Label {
 
     public void setTime(long time) {
         this.time = time;
-        long hours = (time / 1000) / 3600;
-        long minutes = ((time / 1000) % 3600) / 60;
-        long seconds = (time / 1000) % 60;
-        long milliseconds = time % 1000;
-
-        String timeText;
-        if (hours > 0) {
-            timeText = String.format("%d:%02d:%02d:%03d", hours, minutes, seconds, milliseconds);
-        } else if (minutes > 0) {
-            timeText = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
-        } else {
-            timeText = String.format("%02d:%03d", seconds, milliseconds);
-        }
-
-        setText(timeText);
+        setText(TimeUtil.formatTime(time));
     }
 
     public long getTime() {

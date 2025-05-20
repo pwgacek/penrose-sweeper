@@ -1,4 +1,4 @@
-package pl.edu.agh.tgk.penrosesweeper.perstistence;
+package pl.edu.agh.tgk.penrosesweeper.logic.perstistence;
 
 public record LeaderboardEntry(String nick, long time) implements Comparable<LeaderboardEntry> {
 

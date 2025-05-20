@@ -101,6 +101,8 @@ public class BoardOptionsScreen implements Screen {
             }
         });
 
+        nickInput.setTextFieldFilter((textField, c) -> textField.getText().length() <= 12);
+
         table.row();
         table.add(nickLabel).padRight(50).align(Align.left);
         table.add(nickInput).width(220);

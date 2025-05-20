@@ -1,4 +1,4 @@
-package pl.edu.agh.tgk.penrosesweeper.perstistence;
+package pl.edu.agh.tgk.penrosesweeper.logic.perstistence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class Leaderboard {
-    private static final int MAX_ENTRIES = 10;
+    public static final int MAX_ENTRIES = 10;
 
     private static Leaderboard instance;
 
