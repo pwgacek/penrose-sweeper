@@ -58,7 +58,7 @@ configure(subprojects) {
 
 subprojects {
   version = "$projectVersion"
-  ext.appName = 'Penrose Sweeper'
+  ext.appName = 'penrose-sweeper'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
