@@ -25,6 +25,8 @@ import pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Board;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.BoardSize;
 import pl.edu.agh.tgk.penrosesweeper.logic.board.Tile;
+import pl.edu.agh.tgk.penrosesweeper.perstistence.Leaderboard;
+import pl.edu.agh.tgk.penrosesweeper.perstistence.LeaderboardEntry;
 
 import java.util.Optional;
 
@@ -32,8 +34,11 @@ import static pl.edu.agh.tgk.penrosesweeper.logic.GameplayPhase.*;
 
 public class BoardScreen implements Screen {
     private static final int SCREEN_SIZE = 1600;
+    private final Difficulty difficulty;
     private final BoardSize boardSize;
+    private final String nick;
     private final Board board;
+    private final Leaderboard leaderboard;
     private GameplayPhase phase = NOT_STARTED;
     private final Game game;
     private Stage mainStage;
@@ -50,11 +55,13 @@ public class BoardScreen implements Screen {
     private long timeStart;
     private OrthographicCamera camera;
 
-    public BoardScreen(Game game, BoardSize boardSize, Difficulty difficulty) {
+    public BoardScreen(Game game, Difficulty difficulty, BoardSize boardSize, String nick) {
         this.game = game;
+        this.difficulty = difficulty;
         this.boardSize = boardSize;
         this.board = new Board(SCREEN_SIZE, difficulty, boardSize);
-
+        this.nick = nick;
+        this.leaderboard = Leaderboard.getInstance();
     }
 
     @Override
@@ -119,6 +126,7 @@ public class BoardScreen implements Screen {
                             } else if (board.areAllNonMinesUncovered()) {
                                 phase = ENDED;
                                 board.markAllMines();
+                                leaderboard.addEntry(difficulty, boardSize, new LeaderboardEntry(nick, timerLabel.getTime()));
                                 flagsLeftHorizontalGroup.setValue(board.getFlagsLeft());
                                 gameWonDialog.setTimeString(timerLabel.getText().toString());
                                 gameWonDialog.showWithDelay(mainStage, 0.5f);

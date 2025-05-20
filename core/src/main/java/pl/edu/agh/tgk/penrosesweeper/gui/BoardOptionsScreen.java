@@ -44,10 +44,10 @@ public class BoardOptionsScreen implements Screen {
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle(skin.get(TextField.TextFieldStyle.class));
         textFieldStyle.font = font;
 
-        Label nameLabel = new Label("Nick:", labelStyle);
-        TextField nameInput = new TextField("", textFieldStyle);
-        nameInput.setAlignment(Align.center);
-        nameInput.setText("player1");
+        Label nickLabel = new Label("Nick:", labelStyle);
+        TextField nickInput = new TextField("", textFieldStyle);
+        nickInput.setAlignment(Align.center);
+        nickInput.setText("player1");
 
 
 
@@ -78,11 +78,11 @@ public class BoardOptionsScreen implements Screen {
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                String playerName = nameInput.getText();
+                String nick = nickInput.getText();
                 BoardSize boardSize = boardSizeSelect.getSelected();
                 Difficulty difficulty = difficultySelect.getSelected();
 
-                game.setScreen(new BoardScreen(game, boardSize, difficulty));
+                game.setScreen(new BoardScreen(game, difficulty, boardSize, nick));
             }
         });
 
@@ -94,16 +94,16 @@ public class BoardOptionsScreen implements Screen {
             }
         });
 
-        nameInput.addListener(new ChangeListener() {
+        nickInput.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                playButton.setDisabled(nameInput.getText().trim().isEmpty());
+                playButton.setDisabled(nickInput.getText().trim().isEmpty());
             }
         });
 
         table.row();
-        table.add(nameLabel).padRight(50).align(Align.left);
-        table.add(nameInput).width(220);
+        table.add(nickLabel).padRight(50).align(Align.left);
+        table.add(nickInput).width(220);
 
         table.row();
         table.add(boardSizeLabel).padRight(50).align(Align.left);

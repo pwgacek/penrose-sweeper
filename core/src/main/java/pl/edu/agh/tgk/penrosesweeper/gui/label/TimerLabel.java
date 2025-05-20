@@ -9,6 +9,7 @@ import pl.edu.agh.tgk.penrosesweeper.gui.font.FontGenerator;
 
 public class TimerLabel extends Label {
     private final Stage stage;
+    private long time;
 
     public TimerLabel(Stage stage) {
         super("00:000", new LabelStyle(FontGenerator.generate(32, Color.WHITE), Color.WHITE));
@@ -18,6 +19,7 @@ public class TimerLabel extends Label {
     }
 
     public void setTime(long time) {
+        this.time = time;
         long hours = (time / 1000) / 3600;
         long minutes = ((time / 1000) % 3600) / 60;
         long seconds = (time / 1000) % 60;
@@ -33,6 +35,10 @@ public class TimerLabel extends Label {
         }
 
         setText(timeText);
+    }
+
+    public long getTime() {
+        return time;
     }
 
     public void setPosition() {
